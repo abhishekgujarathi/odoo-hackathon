@@ -15,9 +15,9 @@ export const api = axios.create({
 api.interceptors.request.use((config) => {
 	const isPublic = PUBLIC_ROUTES.some(url => config.url?.includes(url))
 
-	const token = localStorage.getItem("token");
-	if (token && !isPublic) {
-		config.headers.Authorization = `Bearer ${token}`;
+	const jwtToken = localStorage.getItem("jwtToken");
+	if (jwtToken && !isPublic) {
+		config.headers.Authorization = `Bearer ${jwtToken}`;
 	}
 	return config;
 });

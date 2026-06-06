@@ -11,25 +11,14 @@ import AppLayout from "./components/layout/AppLayout.tsx";
 import VendorForm from "./pages/VendorForm.tsx";
 import RFQForm from "./pages/RFQForm.tsx";
 import QuotationComparisonPage from "./pages/QuotationComparisonPage.tsx";
+import LoginPage from "./pages/LoginPage.tsx";
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>
     <AppProviders>
-      <BrowserRouter>
-        <Routes>
-          <Route element={<AppLayout />}>
-            <Route path="/" element={<Dashboard />} />
+      
+      <RouterProvider router={router} />
 
-            <Route path="/vendors" element={<VendorsPage />} />
-            <Route path="/vendors/add" element={<VendorForm />} />
-            <Route path="/rfqs" element={<RFQForm />} />
-            <Route
-              path="/quotations"
-              element={<QuotationComparisonPage />}
-            />
-          </Route>
-        </Routes>
-      </BrowserRouter>
     </AppProviders>
   </StrictMode>,
 );

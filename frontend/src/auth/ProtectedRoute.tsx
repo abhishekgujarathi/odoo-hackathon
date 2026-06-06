@@ -1,10 +1,9 @@
 import { Navigate, Outlet, useLocation } from "react-router-dom";
 
 export function getAuthState() {
-  const token = localStorage.getItem("token");
+  const jwtToken = localStorage.getItem("jwtToken");
   const role = localStorage.getItem("role");
-  const employeeId = localStorage.getItem("employeeId");
-  return { token, role, employeeId };
+  return { jwtToken, role };
 }
 
 export default function ProtectedRoute({
@@ -12,10 +11,10 @@ export default function ProtectedRoute({
   children,
   redirectTo = "/login",
 }) {
-  const { token, role } = getAuthState();
+  const { jwtToken, role } = getAuthState();
   const location = useLocation();
 
-  if (!token) {
+  if (!jwtToken) {
     return <Navigate to={redirectTo} state={{ from: location }} />;
   }
 
