@@ -1,0 +1,52 @@
+import {
+	Breadcrumb,
+	BreadcrumbItem,
+	BreadcrumbList,
+	BreadcrumbPage,
+	BreadcrumbSeparator
+} from "@/components/ui/breadcrumb";
+import React from "react";
+import { Link, useLocation } from "react-router-dom";
+
+const AppBreadcrumb = () => {
+	// return <div>breadcrumb</div>;
+	const location = useLocation();
+
+	const path = location.pathname;
+
+	const crumbs = [{ title: "ODOO", path: "/" }];
+
+	const paths = path.split("/");
+	let newPath = "/";
+	paths.forEach((p) => {
+		if (p !== "") {
+			const title =
+				p.substring(0, 1).toUpperCase() + p.substring(1).toLowerCase();
+			newPath += p + "/";
+			crumbs.push({ title: title, path: newPath });
+		}
+	});
+
+	return (
+		<Breadcrumb>
+			<BreadcrumbList>
+				{crumbs.map((c, idx) => {
+					return (
+						<React.Fragment key={c.path + "_" + c.title}>
+							<BreadcrumbItem>
+								<BreadcrumbPage>
+									<Link to={`${c.path}`}>{c.title}</Link>
+								</BreadcrumbPage>
+							</BreadcrumbItem>
+							{crumbs.length - (idx + 1) !== 0 && (
+								<BreadcrumbSeparator className="hidden md:block" />
+							)}
+						</React.Fragment>
+					);
+				})}
+			</BreadcrumbList>
+		</Breadcrumb>
+	);
+};
+
+export default AppBreadcrumb;
