@@ -1,3 +1,4 @@
+using backend.Data.Seeds;
 using backend.Models.Entities;
 using Microsoft.EntityFrameworkCore;
 
@@ -64,6 +65,10 @@ namespace backend.Data
 
             modelBuilder.Entity<VendorCategory>()
                 .HasQueryFilter(c => !c.IsDeleted);
+
+            // ================== SEED DATA ====================
+            UserSeed.Seed(modelBuilder);
+            VendorSeed.Seed(modelBuilder);
         }
     }
 }
