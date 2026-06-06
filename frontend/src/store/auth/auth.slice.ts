@@ -3,16 +3,14 @@ import { jwtDecode } from "jwt-decode";
 
 interface AuthSlice {
 	isAuthenticated: boolean;
-	token: string;
+	jwtToken: string;
 	role: string;
-	employeeId: number;
 }
 
 const initialState: AuthSlice = {
 	isAuthenticated: false,
-	token: "",
+	jwtToken: "",
 	role: "",
-	employeeId: Number.NaN,
 };
 
 const authSlice = createSlice({
@@ -27,13 +25,12 @@ const authSlice = createSlice({
 				}
 
 				const data = action.payload.data;
-				const token = data.token;
-				const decoded = jwtDecode(token);
+				const jwtToken = data.jwtToken;
+				const decoded = jwtDecode(jwtToken);
 
 				state.isAuthenticated = true;
 				state.role = decoded.role;
-				state.token = decoded.token;
-				state.employeeId = data.employeeId
+				state.jwtToken = decoded.jwtToken;
 				// console.log("authSlice", { ...state })
 			} catch (ex) {
 				console.error(ex);

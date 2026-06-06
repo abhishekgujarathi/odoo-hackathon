@@ -16,9 +16,8 @@ export const useLogin = () => {
 			return response.data;
 		},
 		onSuccess: (data) => {
-			localStorage.setItem("token", data.data.token)
-			localStorage.setItem("role", data.data.role)
-			localStorage.setItem("employeeId", data.data.employeeId)
+			localStorage.setItem("jwtToken", data.jwtToken)
+			localStorage.setItem("role", data.role)
 			showSuccess("Login successfull");
 		},
 		onError: () => {
