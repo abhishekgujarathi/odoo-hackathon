@@ -23,6 +23,9 @@ builder.Services.Configure<AppSettings>(builder.Configuration.GetSection("AppSet
 builder.Services.AddScoped<IRepository<User>, Repository<User>>();
 builder.Services.AddScoped<IRepository<Vendor>, Repository<Vendor>>();
 builder.Services.AddScoped<IRepository<VendorCategory>, Repository<VendorCategory>>();
+builder.Services.AddScoped<IRepository<Quotation>, Repository<Quotation>>();
+builder.Services.AddScoped<IRepository<QuotationItem>, Repository<QuotationItem>>();
+builder.Services.AddScoped<IRepository<RFQ>, Repository<RFQ>>();
 
 // Authorization
 builder.Services.AddScoped<JwtUtils>();
@@ -32,6 +35,7 @@ builder.Services.AddScoped<AuthService>();
 builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<VendorService>();
 builder.Services.AddScoped<VendorCategoryService>();
+builder.Services.AddScoped<QuotationService>();
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
