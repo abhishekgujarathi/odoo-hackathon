@@ -87,7 +87,7 @@ export default function QuotationComparisonPage() {
                   key={quotation.id}
                   className={`min-w-[360px]
                     ${
-                      quotation.recommended ? "border-green-500 shadow-lg" : ""
+                      quotation.recommended ? "border-red-500 shadow-lg" : ""
                     }`}
                 >
                   <CardHeader>

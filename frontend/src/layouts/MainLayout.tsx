@@ -8,13 +8,11 @@ import {
 
 
 import { Outlet } from "react-router-dom";
-import AppBreadcrumb from "../components/layout/AppBreadcrumb";
-import AppSidebar from "../components/layout/AppSidebar";
+// import AppBreadcrumb from "../components/layout/AppBreadcrumb";
 
 const MainLayout = () => {
 	return (
 		<SidebarProvider className="bg-primary p-1">
-			<AppSidebar />
 			<SidebarInset className="rounded-2xl w-full max-w-full overflow-hidden">
 				<header className="flex h-16 shrink-0 items-center gap-2 border-b px-4">
 					{/* showing hamburger only on mobile devices */}
@@ -25,7 +23,7 @@ const MainLayout = () => {
 							className="mr-2 data-[orientation=vertical]:h-6"
 						/>
 					</div>
-					<AppBreadcrumb />
+					{/* <AppBreadcrumb /> */}
 				</header>
 				<Outlet />
 			</SidebarInset>

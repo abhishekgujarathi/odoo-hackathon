@@ -2,10 +2,6 @@
 @import "tw-animate-css";
 @import "shadcn/tailwind.css";
 
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
-
 
 
 /* Firefox (uncomment to work in Firefox) */
@@ -14,7 +10,7 @@
   scrollbar-color: #FFFFFF #3E9F34;
 } */
 
-/* Chrome, Edge and Safari */
+/* Chrome, Edge and Safari
 *::-webkit-scrollbar {
   height: 6px;
   width: 6px;
@@ -45,7 +41,7 @@
 
 *::-webkit-scrollbar-thumb:active {
   background-color: #FFFFFF;
-}
+} */
 
 
 
