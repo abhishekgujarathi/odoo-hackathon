@@ -1,16 +1,14 @@
-import { createBrowserRouter, Navigate } from "react-router-dom";
-import PublicLayout from "./components/layout/PublicLayout";
-import MainLayout from "./layouts/MainLayout";
-import ErrorPage from "./pages/ErrorPage";
-import LoginPage from "./pages/LoginPage";
+import { createBrowserRouter } from "react-router-dom";
 import ProtectedRoute from "./auth/ProtectedRoute";
 import { roles } from "./auth/role.util";
 import AppLayout from "./components/layout/AppLayout";
 import Dashboard from "./pages/Dashboard";
-import VendorsPage from "./pages/VendorsPage";
-import VendorForm from "./pages/VendorForm";
-import RFQForm from "./pages/RFQForm";
+import ErrorPage from "./pages/ErrorPage";
+import LoginPage from "./pages/LoginPage";
 import QuotationComparisonPage from "./pages/QuotationComparisonPage";
+import RFQForm from "./pages/RFQForm";
+import VendorForm from "./pages/VendorForm";
+import VendorsPage from "./pages/VendorsPage";
 
 const { admin, user } = roles;
 
@@ -34,6 +32,10 @@ const router = createBrowserRouter([
       {
         path: "vendors/add",
         element: <VendorForm />,
+      },
+      {
+        path: "vendors/:id/edit",
+        element: <VendorForm />
       },
       {
         path: "rfqs",
