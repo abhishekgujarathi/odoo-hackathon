@@ -52,7 +52,7 @@ A comprehensive, end-to-end B2B Vendor Management and Procurement software solut
    ```bash
    dotnet ef database update
    ```
-4. Start the backend server (starts on `https://localhost:7111` or `http://localhost:5033`):
+4. Start the backend server:
    ```bash
    dotnet run
    ```
