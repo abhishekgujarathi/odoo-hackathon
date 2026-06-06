@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-import { Plus, Search, Building2 } from "lucide-react";
+import { Plus, Search, Building2, Pencil, Trash2 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -57,6 +57,18 @@ export default function VendorsPage() {
       console.error("Failed to load vendors:", err);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleDelete = async (id: string, name: string) => {
+    if (window.confirm(`Are you sure you want to delete vendor "${name}"?`)) {
+      try {
+        await vendorApi.delete(id);
+        setVendors((prev) => prev.filter((v) => v.id !== id));
+      } catch (err: any) {
+        console.error("Failed to delete vendor:", err);
+        alert(err.message || "Failed to delete vendor");
+      }
     }
   };
 
@@ -190,13 +202,24 @@ export default function VendorsPage() {
                       </Badge>
                     </TableCell>
                     <TableCell>
-                      <Button
-                        size="sm"
-                        variant="outline"
-                        onClick={() => navigate(`/vendors/${vendor.id}/edit`)}
-                      >
-                        View
-                      </Button>
+                      <div className="flex items-center gap-2">
+                        <Button
+                          size="icon"
+                          variant="ghost"
+                          title="Edit Vendor"
+                          onClick={() => navigate(`/vendors/${vendor.id}/edit`)}
+                        >
+                          <Pencil className="h-4 w-4 text-primary" />
+                        </Button>
+                        <Button
+                          size="icon"
+                          variant="ghost"
+                          title="Delete Vendor"
+                          onClick={() => handleDelete(vendor.id, vendor.companyName)}
+                        >
+                          <Trash2 className="h-4 w-4 text-destructive" />
+                        </Button>
+                      </div>
                     </TableCell>
                   </TableRow>
                 ))}
