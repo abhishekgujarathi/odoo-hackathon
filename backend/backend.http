@@ -1,0 +1,50 @@
+@backend_HostAddress = http://localhost:5250
+
+### ==================== AUTH ====================
+
+### Login
+POST {{backend_HostAddress}}/api/v1/auth/login
+Content-Type: application/json
+
+{
+  "email": "johndoe@example.com",
+  "password": "Test@123"
+}
+
+### Verify Token
+GET {{backend_HostAddress}}/api/v1/auth/verify
+Authorization: Bearer {{jwtToken}}
+Accept: application/json
+
+### ==================== USERS ====================
+
+### Get All Users
+GET {{backend_HostAddress}}/api/v1/user
+Accept: application/json
+
+### Get User By Id
+GET {{backend_HostAddress}}/api/v1/user/{{userId}}
+Accept: application/json
+
+### Create User
+POST {{backend_HostAddress}}/api/v1/user
+Content-Type: application/json
+
+{
+  "username": "johndoe",
+  "password": "Test@123",
+  "email": "johndoe@example.com"
+}
+
+### Update User
+PUT {{backend_HostAddress}}/api/v1/user/{{userId}}
+Content-Type: application/json
+
+{
+  "username": "johndoe_updated",
+  "email": "johndoe_updated@example.com"
+}
+
+### Delete User
+DELETE {{backend_HostAddress}}/api/v1/user/{{userId}}
+Accept: application/json

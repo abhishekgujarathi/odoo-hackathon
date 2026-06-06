@@ -63,3 +63,9 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+
+### .NET ###
+bin/
+obj/
+.vs/
+*.user
