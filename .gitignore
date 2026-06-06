@@ -64,7 +64,6 @@ dist-ssr
 *.sln
 *.sw?
 
-<<<<<<< Updated upstream
 # .net
 
 ## Ignore Visual Studio temporary files, build results, and
@@ -430,10 +429,3 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
-=======
-### .NET ###
-bin/
-obj/
-.vs/
-
->>>>>>> Stashed changes
