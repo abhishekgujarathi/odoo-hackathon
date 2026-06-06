@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-import { Plus, Search, Building2, Pencil, Trash2 } from "lucide-react";
+import { Plus, Search, Building2, Pencil, Trash2, ChevronLeft, ChevronRight } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -8,6 +8,14 @@ import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 import { Badge } from "@/components/ui/badge";
+
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 import {
   Table,
@@ -43,6 +51,10 @@ export default function VendorsPage() {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [activeFilter, setActiveFilter] = useState<string>("All");
+
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(5);
 
   useEffect(() => {
     loadVendors();
@@ -84,6 +96,18 @@ export default function VendorsPage() {
     const statusLabel = statusLabels[v.status] || "";
     return matchesSearch && statusLabel === activeFilter;
   });
+
+  // Reset pagination when search, filter, or itemsPerPage changes
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [search, activeFilter, itemsPerPage]);
+
+  // Pagination logic
+  const totalPages = Math.ceil(filteredVendors.length / itemsPerPage);
+  const paginatedVendors = filteredVendors.slice(
+    (currentPage - 1) * itemsPerPage,
+    currentPage * itemsPerPage
+  );
 
   // Status counts
   const statusCounts = vendors.reduce(
@@ -181,7 +205,7 @@ export default function VendorsPage() {
               </TableHeader>
 
               <TableBody>
-                {filteredVendors.map((vendor) => (
+                {paginatedVendors.map((vendor) => (
                   <TableRow key={vendor.id} className="hover:bg-muted/20">
                     <TableCell className="font-mono text-sm">
                       {vendor.vendorCode}
@@ -225,6 +249,70 @@ export default function VendorsPage() {
                 ))}
               </TableBody>
             </Table>
+          )}
+
+          {/* Pagination Controls */}
+          {filteredVendors.length > 0 && (
+            <div className="flex items-center justify-between mt-6">
+              <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                <p>
+                  Showing {(currentPage - 1) * itemsPerPage + 1} to{" "}
+                  {Math.min(currentPage * itemsPerPage, filteredVendors.length)} of{" "}
+                  {filteredVendors.length} vendors
+                </p>
+                <div className="flex items-center gap-2 border-l pl-4">
+                  <span>Rows per page</span>
+                  <Select
+                    value={itemsPerPage.toString()}
+                    onValueChange={(val) => setItemsPerPage(Number(val))}
+                  >
+                    <SelectTrigger className="h-8 w-[70px]">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="5">5</SelectItem>
+                      <SelectItem value="10">10</SelectItem>
+                      <SelectItem value="25">25</SelectItem>
+                      <SelectItem value="50">50</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+
+              <div className="flex items-center gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                  disabled={currentPage === 1}
+                >
+                  <ChevronLeft className="h-4 w-4 mr-1" />
+                  Previous
+                </Button>
+                <div className="flex items-center gap-1">
+                  {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                    <Button
+                      key={page}
+                      variant={currentPage === page ? "default" : "outline"}
+                      size="icon"
+                      className="h-8 w-8"
+                      onClick={() => setCurrentPage(page)}
+                    >
+                      {page}
+                    </Button>
+                  ))}
+                </div>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+                  disabled={currentPage === totalPages}
+                >
+                  Next
+                  <ChevronRight className="h-4 w-4 ml-1" />
+                </Button>
+              </div>
+            </div>
           )}
         </CardContent>
       </Card>
