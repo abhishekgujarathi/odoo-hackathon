@@ -11,12 +11,18 @@ namespace backend.Services
     {
         private readonly ILogger<VendorService> _logger;
         private readonly IRepository<Vendor> _vendorRepo;
+        private readonly IRepository<User> _userRepo;
         private readonly ApplicationDbContext _context;
 
-        public VendorService(ILogger<VendorService> logger, IRepository<Vendor> vendorRepository, ApplicationDbContext context)
+        public VendorService(
+            ILogger<VendorService> logger,
+            IRepository<Vendor> vendorRepository,
+            IRepository<User> userRepository,
+            ApplicationDbContext context)
         {
             _logger = logger;
             _vendorRepo = vendorRepository;
+            _userRepo = userRepository;
             _context = context;
         }
 
@@ -24,6 +30,7 @@ namespace backend.Services
         {
             var vendors = await _context.Vendors
                 .Include(v => v.Category)
+                .Include(v => v.User)
                 .ToListAsync();
 
             return vendors.Select(MapToResponseDto).ToList();
@@ -33,6 +40,7 @@ namespace backend.Services
         {
             var vendor = await _context.Vendors
                 .Include(v => v.Category)
+                .Include(v => v.User)
                 .FirstOrDefaultAsync(v => v.Id == id);
 
             if (vendor == null) throw new Exception("Vendor not found");
@@ -42,51 +50,81 @@ namespace backend.Services
 
         public async Task<VendorResponseDto> CreateVendor(CreateVendorDto dto)
         {
-            // Check if email already exists
-            var existingEmail = await _vendorRepo.FindAsync(v => v.Email == dto.Email);
-            if (existingEmail != null) throw new Exception("Vendor with this email already exists");
+            var existingVendorEmail = await _vendorRepo.FindAsync(v => v.Email == dto.Email);
+            if (existingVendorEmail != null) throw new Exception("Vendor with this email already exists");
 
-            // Auto-generate vendor code
-            var vendorCode = await GenerateVendorCode();
+            var existingUserEmail = await _userRepo.FindAsync(u => u.Email == dto.Email);
+            if (existingUserEmail != null) throw new Exception("A user with this email already exists");
 
-            var vendor = new Vendor
+            using var transaction = await _context.Database.BeginTransactionAsync();
+
+            try
             {
-                Id = Guid.NewGuid(),
-                VendorCode = vendorCode,
-                CompanyName = dto.CompanyName,
-                GSTNumber = dto.GSTNumber,
-                PANNumber = dto.PANNumber,
-                Email = dto.Email,
-                Phone = dto.Phone,
-                Website = dto.Website,
-                AddressLine1 = dto.AddressLine1,
-                AddressLine2 = dto.AddressLine2,
-                City = dto.City,
-                State = dto.State,
-                Country = dto.Country,
-                PostalCode = dto.PostalCode,
-                Status = VendorStatus.Pending,
-                Rating = 0,
-                CategoryId = dto.CategoryId,
-                UserId = dto.UserId,
-                CreatedAt = DateTime.UtcNow
-            };
+                var user = new User
+                {
+                    Id = Guid.NewGuid(),
+                    FirstName = dto.ContactFirstName,
+                    LastName = dto.ContactLastName,
+                    Email = dto.Email,
+                    PasswordHash = BCrypt.Net.BCrypt.HashPassword(dto.Password),
+                    PhoneNumber = dto.Phone,
+                    Role = UserRole.Vendor,
+                    IsActive = true,
+                    CreatedAt = DateTime.UtcNow
+                };
 
-            await _vendorRepo.AddAsync(vendor);
-            _logger.LogInformation("Vendor created with code: {VendorCode}", vendor.VendorCode);
+                await _userRepo.AddAsync(user);
+                _logger.LogInformation("Vendor user account created: {Email} (UserId: {UserId})", user.Email, user.Id);
 
-            // Reload with Category navigation
-            var created = await _context.Vendors
-                .Include(v => v.Category)
-                .FirstAsync(v => v.Id == vendor.Id);
+                var vendorCode = await GenerateVendorCode();
 
-            return MapToResponseDto(created);
+                var vendor = new Vendor
+                {
+                    Id = Guid.NewGuid(),
+                    VendorCode = vendorCode,
+                    CompanyName = dto.CompanyName,
+                    GSTNumber = dto.GSTNumber,
+                    PANNumber = dto.PANNumber,
+                    Email = dto.Email,
+                    Phone = dto.Phone,
+                    Website = dto.Website,
+                    AddressLine1 = dto.AddressLine1,
+                    AddressLine2 = dto.AddressLine2,
+                    City = dto.City,
+                    State = dto.State,
+                    Country = dto.Country,
+                    PostalCode = dto.PostalCode,
+                    Status = VendorStatus.Pending,
+                    Rating = 0,
+                    CategoryId = dto.CategoryId,
+                    UserId = user.Id,
+                    CreatedAt = DateTime.UtcNow
+                };
+
+                await _vendorRepo.AddAsync(vendor);
+                _logger.LogInformation("Vendor created with code: {VendorCode}, linked to UserId: {UserId}", vendor.VendorCode, user.Id);
+
+                await transaction.CommitAsync();
+
+                var created = await _context.Vendors
+                    .Include(v => v.Category)
+                    .Include(v => v.User)
+                    .FirstAsync(v => v.Id == vendor.Id);
+
+                return MapToResponseDto(created);
+            }
+            catch
+            {
+                await transaction.RollbackAsync();
+                throw;
+            }
         }
 
         public async Task<VendorResponseDto> UpdateVendor(Guid id, UpdateVendorDto dto)
         {
             var vendor = await _context.Vendors
                 .Include(v => v.Category)
+                .Include(v => v.User)
                 .FirstOrDefaultAsync(v => v.Id == id);
 
             if (vendor == null) throw new Exception("Vendor not found");
@@ -133,7 +171,6 @@ namespace backend.Services
             _logger.LogInformation("Vendor deleted: {Id}", id);
         }
 
-        // ================== HELPER METHODS ====================
 
         private async Task<string> GenerateVendorCode()
         {
@@ -172,9 +209,13 @@ namespace backend.Services
                 CategoryId = vendor.CategoryId,
                 CategoryName = vendor.Category?.Name,
                 UserId = vendor.UserId,
+                ContactName = vendor.User != null
+                    ? $"{vendor.User.FirstName} {vendor.User.LastName}"
+                    : null,
                 CreatedAt = vendor.CreatedAt,
                 UpdatedAt = vendor.UpdatedAt
             };
         }
     }
 }
+

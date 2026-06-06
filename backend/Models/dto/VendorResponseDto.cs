@@ -23,6 +23,7 @@ namespace backend.Models.dto
         public Guid CategoryId { get; set; }
         public string? CategoryName { get; set; }
         public Guid UserId { get; set; }
+        public string? ContactName { get; set; }
         public DateTime CreatedAt { get; set; }
         public DateTime? UpdatedAt { get; set; }
     }

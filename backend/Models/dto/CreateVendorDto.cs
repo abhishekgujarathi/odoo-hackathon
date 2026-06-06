@@ -44,7 +44,13 @@ namespace backend.Models.dto
         [Required]
         public Guid CategoryId { get; set; }
 
+        [Required, MaxLength(50)]
+        public string ContactFirstName { get; set; } = string.Empty;
+
+        [Required, MaxLength(50)]
+        public string ContactLastName { get; set; } = string.Empty;
+
         [Required]
-        public Guid UserId { get; set; }
+        public string Password { get; set; } = string.Empty;
     }
 }
