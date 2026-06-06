@@ -1,82 +1,59 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
-import AppSidebar from "@/components/layout/AppSidebar";
-import { AppHeader } from "@/components/layout/AppHeader";
-
 import { StatsCard } from "@/components/dashboard/StatsCard";
 import { RecentOrdersTable } from "@/components/dashboard/RecentOrdersTable";
 import { QuickActions } from "@/components/dashboard/QuickActions";
 
 export default function Dashboard() {
   return (
-    <div className="flex min-h-screen bg-muted/30">
-      <main className="flex-1">
-        <AppHeader />
+    <div className="p-6 space-y-6">
+      <div>
+        <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
+        <p className="text-muted-foreground mt-1">
+          Welcome back! Here's your procurement overview.
+        </p>
+      </div>
 
-        <div className="p-6 space-y-6">
-          <div className="grid gap-4 md:grid-cols-4">
-            <StatsCard
-              title="Active RFQs"
-              value="12"
-            />
+      <div className="grid gap-4 md:grid-cols-4">
+        <StatsCard title="Active RFQs" value="12" />
+        <StatsCard title="Pending Approvals" value="5" />
+        <StatsCard title="PO This Month" value="$2.3L" />
+        <StatsCard title="Overdue Invoices" value="3" />
+      </div>
 
-            <StatsCard
-              title="Pending Approvals"
-              value="5"
-            />
+      <div className="grid gap-6 lg:grid-cols-3">
+        <Card className="lg:col-span-2">
+          <CardHeader>
+            <CardTitle>Recent Purchase Orders</CardTitle>
+          </CardHeader>
 
-            <StatsCard
-              title="PO This Month"
-              value="$2.3L"
-            />
+          <CardContent>
+            <RecentOrdersTable />
+          </CardContent>
+        </Card>
 
-            <StatsCard
-              title="Overdue Invoices"
-              value="3"
-            />
-          </div>
+        <Card>
+          <CardHeader>
+            <CardTitle>Spending Overview</CardTitle>
+          </CardHeader>
 
-          <div className="grid gap-6 lg:grid-cols-3">
-            <Card className="lg:col-span-2">
-              <CardHeader>
-                <CardTitle>
-                  Recent Purchase Orders
-                </CardTitle>
-              </CardHeader>
+          <CardContent>
+            <div className="h-[250px] flex items-center justify-center text-muted-foreground">
+              Chart Area
+            </div>
+          </CardContent>
+        </Card>
+      </div>
 
-              <CardContent>
-                <RecentOrdersTable />
-              </CardContent>
-            </Card>
+      <Card>
+        <CardHeader>
+          <CardTitle>Quick Actions</CardTitle>
+        </CardHeader>
 
-            <Card>
-              <CardHeader>
-                <CardTitle>
-                  Spending Overview
-                </CardTitle>
-              </CardHeader>
-
-              <CardContent>
-                <div className="h-[250px] flex items-center justify-center text-muted-foreground">
-                  Chart Area
-                </div>
-              </CardContent>
-            </Card>
-          </div>
-
-          <Card>
-            <CardHeader>
-              <CardTitle>
-                Quick Actions
-              </CardTitle>
-            </CardHeader>
-
-            <CardContent>
-              <QuickActions />
-            </CardContent>
-          </Card>
-        </div>
-      </main>
+        <CardContent>
+          <QuickActions />
+        </CardContent>
+      </Card>
     </div>
   );
 }

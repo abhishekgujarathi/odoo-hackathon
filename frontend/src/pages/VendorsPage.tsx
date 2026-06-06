@@ -1,4 +1,6 @@
-import { Plus } from "lucide-react";
+import { useEffect, useState } from "react";
+
+import { Plus, Search, Building2 } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -17,139 +19,190 @@ import {
 } from "@/components/ui/table";
 import { useNavigate } from "react-router-dom";
 
-const vendors = [
-  {
-    id: 1,
-    name: "Infra Supplies Pvt Ltd",
-    category: "Construction",
-    gst: "27AABCS1924B2Z0",
-    contact: "9876543210",
-    status: "Active",
-  },
+import { vendorApi, type Vendor } from "@/api/vendorApi";
 
-  {
-    id: 2,
-    name: "Tech Core LTD",
-    category: "IT",
-    gst: "27AABCS1924B2Z1",
-    contact: "9876543211",
-    status: "Active",
-  },
+const statusLabels: Record<number, string> = {
+  0: "Pending",
+  1: "Active",
+  2: "Approved",
+  3: "Blocked",
+  4: "Rejected",
+};
 
-  {
-    id: 3,
-    name: "FastLog Transport",
-    category: "Logistics",
-    gst: "27AABCS1924B2Z2",
-    contact: "9876543212",
-    status: "Blocked",
-  },
-];
+const statusVariants: Record<number, "default" | "secondary" | "destructive" | "outline"> = {
+  0: "secondary",
+  1: "default",
+  2: "default",
+  3: "destructive",
+  4: "destructive",
+};
 
 export default function VendorsPage() {
-
-
   const navigate = useNavigate();
+  const [vendors, setVendors] = useState<Vendor[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [search, setSearch] = useState("");
+  const [activeFilter, setActiveFilter] = useState<string>("All");
+
+  useEffect(() => {
+    loadVendors();
+  }, []);
+
+  const loadVendors = async () => {
+    try {
+      setLoading(true);
+      const data = await vendorApi.getAll();
+      setVendors(data);
+    } catch (err) {
+      console.error("Failed to load vendors:", err);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Filter logic
+  const filteredVendors = vendors.filter((v) => {
+    const matchesSearch =
+      v.companyName.toLowerCase().includes(search.toLowerCase()) ||
+      v.email.toLowerCase().includes(search.toLowerCase()) ||
+      (v.gstNumber?.toLowerCase().includes(search.toLowerCase()) ?? false) ||
+      (v.categoryName?.toLowerCase().includes(search.toLowerCase()) ?? false);
+
+    if (activeFilter === "All") return matchesSearch;
+    const statusLabel = statusLabels[v.status] || "";
+    return matchesSearch && statusLabel === activeFilter;
+  });
+
+  // Status counts
+  const statusCounts = vendors.reduce(
+    (acc, v) => {
+      const label = statusLabels[v.status] || "Unknown";
+      acc[label] = (acc[label] || 0) + 1;
+      return acc;
+    },
+    {} as Record<string, number>
+  );
 
   return (
     <div className="p-6 space-y-6">
       {/* Header */}
-
       <div className="flex items-start justify-between">
         <div>
-          <h1 className="text-3xl font-bold">Vendors</h1>
-
-          <p className="text-muted-foreground">
+          <h1 className="text-3xl font-bold tracking-tight">Vendors</h1>
+          <p className="text-muted-foreground mt-1">
             Manage supplier profiles and registrations
           </p>
         </div>
-        <div>
-          <Button onClick={() => navigate("/vendors/add")}>
-            <Plus className="mr-2 h-4 w-4" />
-            Add Vendor
-          </Button>
-        </div>
+        <Button onClick={() => navigate("/vendors/add")} className="gap-2">
+          <Plus className="h-4 w-4" />
+          Add Vendor
+        </Button>
       </div>
 
       {/* Search */}
-
-      <Input placeholder="Search by vendor name, GST number, category..." />
+      <div className="relative">
+        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+        <Input
+          className="pl-10"
+          placeholder="Search by vendor name, GST number, category..."
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+        />
+      </div>
 
       {/* Status Tabs */}
-
       <div className="flex gap-2 flex-wrap">
-        <Badge variant="secondary" className="cursor-pointer">
-          All (29)
+        <Badge
+          variant={activeFilter === "All" ? "default" : "outline"}
+          className="cursor-pointer"
+          onClick={() => setActiveFilter("All")}
+        >
+          All ({vendors.length})
         </Badge>
 
-        <Badge variant="outline" className="cursor-pointer">
-          Active (21)
-        </Badge>
-
-        <Badge variant="outline" className="cursor-pointer">
-          Pending (4)
-        </Badge>
-
-        <Badge variant="outline" className="cursor-pointer">
-          Blocked (3)
-        </Badge>
+        {Object.entries(statusCounts).map(([label, count]) => (
+          <Badge
+            key={label}
+            variant={activeFilter === label ? "default" : "outline"}
+            className="cursor-pointer"
+            onClick={() => setActiveFilter(label)}
+          >
+            {label} ({count})
+          </Badge>
+        ))}
       </div>
 
       {/* Vendor Table */}
-
       <Card>
         <CardHeader>
-          <CardTitle>Vendor Directory</CardTitle>
+          <div className="flex items-center gap-3">
+            <div className="rounded-lg bg-primary/10 p-2">
+              <Building2 className="h-5 w-5 text-primary" />
+            </div>
+            <CardTitle>Vendor Directory</CardTitle>
+          </div>
         </CardHeader>
 
         <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Vendor Name</TableHead>
-
-                <TableHead>Category</TableHead>
-
-                <TableHead>GST Number</TableHead>
-
-                <TableHead>Contact</TableHead>
-
-                <TableHead>Status</TableHead>
-
-                <TableHead>Action</TableHead>
-              </TableRow>
-            </TableHeader>
-
-            <TableBody>
-              {vendors.map((vendor) => (
-                <TableRow key={vendor.id}>
-                  <TableCell className="font-medium">{vendor.name}</TableCell>
-
-                  <TableCell>{vendor.category}</TableCell>
-
-                  <TableCell>{vendor.gst}</TableCell>
-
-                  <TableCell>{vendor.contact}</TableCell>
-
-                  <TableCell>
-                    <Badge
-                      variant={
-                        vendor.status === "Active" ? "default" : "destructive"
-                      }
-                    >
-                      {vendor.status}
-                    </Badge>
-                  </TableCell>
-
-                  <TableCell>
-                    <Button size="sm" variant="outline">
-                      View
-                    </Button>
-                  </TableCell>
+          {loading ? (
+            <div className="flex items-center justify-center py-12 text-muted-foreground">
+              Loading vendors...
+            </div>
+          ) : filteredVendors.length === 0 ? (
+            <div className="flex items-center justify-center py-12 text-muted-foreground">
+              {search
+                ? "No vendors match your search."
+                : "No vendors found. Click 'Add Vendor' to get started."}
+            </div>
+          ) : (
+            <Table>
+              <TableHeader>
+                <TableRow className="bg-muted/30">
+                  <TableHead className="font-semibold">Vendor Code</TableHead>
+                  <TableHead className="font-semibold">Company Name</TableHead>
+                  <TableHead className="font-semibold">Category</TableHead>
+                  <TableHead className="font-semibold">Email</TableHead>
+                  <TableHead className="font-semibold">GST Number</TableHead>
+                  <TableHead className="font-semibold">Status</TableHead>
+                  <TableHead className="font-semibold">Action</TableHead>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+              </TableHeader>
+
+              <TableBody>
+                {filteredVendors.map((vendor) => (
+                  <TableRow key={vendor.id} className="hover:bg-muted/20">
+                    <TableCell className="font-mono text-sm">
+                      {vendor.vendorCode}
+                    </TableCell>
+                    <TableCell className="font-medium">
+                      {vendor.companyName}
+                    </TableCell>
+                    <TableCell>{vendor.categoryName || "—"}</TableCell>
+                    <TableCell className="text-muted-foreground">
+                      {vendor.email}
+                    </TableCell>
+                    <TableCell className="font-mono text-sm">
+                      {vendor.gstNumber || "—"}
+                    </TableCell>
+                    <TableCell>
+                      <Badge variant={statusVariants[vendor.status] || "outline"}>
+                        {statusLabels[vendor.status] || "Unknown"}
+                      </Badge>
+                    </TableCell>
+                    <TableCell>
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        onClick={() => navigate(`/vendors/${vendor.id}/edit`)}
+                      >
+                        View
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          )}
         </CardContent>
       </Card>
     </div>
