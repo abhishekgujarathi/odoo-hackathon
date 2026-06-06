@@ -38,6 +38,7 @@ builder.Services.AddScoped<VendorCategoryService>();
 builder.Services.AddScoped<QuotationService>();
 builder.Services.AddScoped<RFQService>();
 
+
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
