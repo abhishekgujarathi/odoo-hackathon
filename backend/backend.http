@@ -7,8 +7,8 @@ POST {{backend_HostAddress}}/api/v1/auth/login
 Content-Type: application/json
 
 {
-  "email": "johndoe@example.com",
-  "password": "Test@123"
+  "email": "admin@vendorbridge.com",
+  "password": "Admin@123"
 }
 
 ### Verify Token
@@ -46,12 +46,86 @@ Content-Type: application/json
 {
   "firstName": "John_Updated",
   "lastName": "Doe_Updated",
-  "email": "johndoe_updated@example.com",
-  "phoneNumber": "9876543211",
-  "role": 2,
-  "isActive": true
+  "email": "johndoe_updated@example.com"
 }
 
 ### Delete User
 DELETE {{backend_HostAddress}}/api/v1/user/{{userId}}
+Accept: application/json
+
+### ==================== VENDOR CATEGORIES ====================
+
+### Get All Vendor Categories
+GET {{backend_HostAddress}}/api/v1/vendor-category
+Accept: application/json
+
+### Get Vendor Category By Id
+GET {{backend_HostAddress}}/api/v1/vendor-category/{{categoryId}}
+Accept: application/json
+
+### Create Vendor Category
+POST {{backend_HostAddress}}/api/v1/vendor-category
+Content-Type: application/json
+
+{
+  "name": "IT Hardware",
+  "description": "Computers, servers, and networking equipment"
+}
+
+### Update Vendor Category
+PUT {{backend_HostAddress}}/api/v1/vendor-category/{{categoryId}}
+Content-Type: application/json
+
+{
+  "name": "IT Hardware Updated",
+  "description": "Updated description"
+}
+
+### Delete Vendor Category
+DELETE {{backend_HostAddress}}/api/v1/vendor-category/{{categoryId}}
+Accept: application/json
+
+### ==================== VENDORS ====================
+
+### Get All Vendors
+GET {{backend_HostAddress}}/api/v1/vendor
+Accept: application/json
+
+### Get Vendor By Id
+GET {{backend_HostAddress}}/api/v1/vendor/{{vendorId}}
+Accept: application/json
+
+### Create Vendor
+POST {{backend_HostAddress}}/api/v1/vendor
+Content-Type: application/json
+
+{
+  "companyName": "TechSupply India Pvt Ltd",
+  "gstNumber": "27AABCT1234F1ZH",
+  "panNumber": "AABCT1234F",
+  "email": "contact@techsupply.com",
+  "phone": "022-12345678",
+  "website": "https://www.techsupply.com",
+  "addressLine1": "Unit 5, Tech Park",
+  "addressLine2": "Andheri East",
+  "city": "Mumbai",
+  "state": "Maharashtra",
+  "country": "India",
+  "postalCode": "400069",
+  "categoryId": "{{categoryId}}",
+  "userId": "{{userId}}"
+}
+
+### Update Vendor
+PUT {{backend_HostAddress}}/api/v1/vendor/{{vendorId}}
+Content-Type: application/json
+
+{
+  "companyName": "TechSupply Updated",
+  "status": 2,
+  "rating": 4.5
+}
+
+### Delete Vendor
+DELETE {{backend_HostAddress}}/api/v1/vendor/{{vendorId}}
 Accept: application/json

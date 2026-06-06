@@ -30,6 +30,8 @@ builder.Services.AddScoped<JwtUtils>();
 // Services
 builder.Services.AddScoped<AuthService>();
 builder.Services.AddScoped<UserService>();
+builder.Services.AddScoped<VendorService>();
+builder.Services.AddScoped<VendorCategoryService>();
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
