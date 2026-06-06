@@ -45,6 +45,26 @@ const router = createBrowserRouter([
         path: "quotations",
         element: <QuotationComparisonPage />,
       },
+      {
+        path: "approvals",
+        element: <Dashboard />,
+      },
+      {
+        path: "purchase-orders",
+        element: <Dashboard />,
+      },
+      {
+        path: "invoices",
+        element: <Dashboard />,
+      },
+      {
+        path: "reports",
+        element: <Dashboard />,
+      },
+      {
+        path: "activity",
+        element: <Dashboard />,
+      },
     ],
   },
   {
@@ -56,26 +76,5 @@ const router = createBrowserRouter([
     element: <ErrorPage />,
   },
 ]);
-
-
-// const router = createBrowserRouter([
-
-//   {
-//     // path: "/",
-//     // element: (
-//     //   <ProtectedRoute>
-//     //     <MainLayout />
-//     //   </ProtectedRoute>
-//     // ),
-//     path: "/",
-//     element: <LoginPage />,
-//     // element: <PublicLayout />,
-//     // children: [
-//     //   { path: "/login", element: <LoginPage /> },
-//     // ],
-//   },
-//   { path: "/login", element: <LoginPage /> },
-//   { path: "*", element: <ErrorPage /> },
-// ]);
 
 export default router;
