@@ -23,15 +23,23 @@ namespace backend.Services
         {
             var user = _context.Users.SingleOrDefault(x => x.Email == dto.Email);
 
-            if (user == null || !BCrypt.Net.BCrypt.Verify(dto.Password, user.Password))
+            if (user == null || !BCrypt.Net.BCrypt.Verify(dto.Password, user.PasswordHash))
             {
                 throw new AppException("Invalid email or password");
             }
 
+            if (!user.IsActive)
+            {
+                throw new AppException("Account is deactivated. Please contact administrator.");
+            }
+
+            user.LastLoginAt = DateTime.UtcNow;
+            await _context.SaveChangesAsync();
+
             var jwtToken = _jwtUtils.GenerateJwtToken(user);
 
             _logger.LogInformation("User logged in: {Email}", user.Email);
-            return new LoginResponseDto(user.Id.ToString(), user.Username, user.Email, jwtToken);
+            return new LoginResponseDto(user.Id.ToString(), user.FirstName, user.LastName, user.Email, user.Role.ToString(), jwtToken);
         }
     }
 }

@@ -40,8 +40,10 @@ namespace backend.Controllers
             return Ok(new
             {
                 userId = user.Id.ToString(),
-                username = user.Username,
+                firstName = user.FirstName,
+                lastName = user.LastName,
                 email = user.Email,
+                role = user.Role.ToString(),
                 jwtToken = Request.Headers["Authorization"].FirstOrDefault()?.Split(" ").Last()
             });
         }

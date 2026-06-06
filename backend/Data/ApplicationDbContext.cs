@@ -13,6 +13,8 @@ namespace backend.Data
         }
 
         public DbSet<User> Users { get; set; }
+        public DbSet<Vendor> Vendors { get; set; }
+        public DbSet<VendorCategory> VendorCategories { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -20,12 +22,48 @@ namespace backend.Data
 
             // ================== USERS ====================
             modelBuilder.Entity<User>()
-                .HasIndex(u => u.Username)
-                .IsUnique();
-
-            modelBuilder.Entity<User>()
                 .HasIndex(u => u.Email)
                 .IsUnique();
+
+            // ================== VENDORS ====================
+            modelBuilder.Entity<Vendor>()
+                .HasIndex(v => v.VendorCode)
+                .IsUnique();
+
+            modelBuilder.Entity<Vendor>()
+                .HasIndex(v => v.Email)
+                .IsUnique();
+
+            modelBuilder.Entity<Vendor>()
+                .HasOne(v => v.Category)
+                .WithMany(c => c.Vendors)
+                .HasForeignKey(v => v.CategoryId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Vendor>()
+                .HasOne(v => v.User)
+                .WithMany()
+                .HasForeignKey(v => v.UserId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            modelBuilder.Entity<Vendor>()
+                .Property(v => v.Rating)
+                .HasPrecision(3, 2);
+
+            // ================== VENDOR CATEGORIES ====================
+            modelBuilder.Entity<VendorCategory>()
+                .HasIndex(c => c.Name)
+                .IsUnique();
+
+            // ================== GLOBAL FILTERS ====================
+            modelBuilder.Entity<User>()
+                .HasQueryFilter(u => !u.IsDeleted);
+
+            modelBuilder.Entity<Vendor>()
+                .HasQueryFilter(v => !v.IsDeleted);
+
+            modelBuilder.Entity<VendorCategory>()
+                .HasQueryFilter(c => !c.IsDeleted);
         }
     }
 }

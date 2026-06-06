@@ -31,10 +31,6 @@ namespace backend.Services
 
         public async Task<UserResponseDto> CreateUser(CreateUserDto dto)
         {
-            // Check if username already exists
-            var existingUser = await _userRepo.FindAsync(u => u.Username == dto.Username);
-            if (existingUser != null) throw new Exception("Username already exists");
-
             // Check if email already exists
             var existingEmail = await _userRepo.FindAsync(u => u.Email == dto.Email);
             if (existingEmail != null) throw new Exception("Email already exists");
@@ -42,9 +38,13 @@ namespace backend.Services
             var user = new User
             {
                 Id = Guid.NewGuid(),
-                Username = dto.Username,
-                Password = BCrypt.Net.BCrypt.HashPassword(dto.Password),
+                FirstName = dto.FirstName,
+                LastName = dto.LastName,
                 Email = dto.Email,
+                PasswordHash = BCrypt.Net.BCrypt.HashPassword(dto.Password),
+                PhoneNumber = dto.PhoneNumber,
+                Role = dto.Role,
+                IsActive = true,
                 CreatedAt = DateTime.UtcNow
             };
 
@@ -59,13 +59,11 @@ namespace backend.Services
             var user = await _userRepo.GetByIdAsync(id);
             if (user == null) throw new Exception("User not found");
 
-            if (!string.IsNullOrEmpty(dto.Username))
-            {
-                var existingUser = await _userRepo.FindAsync(u => u.Username == dto.Username);
-                if (existingUser != null && existingUser.Id != id)
-                    throw new Exception("Username already exists");
-                user.Username = dto.Username;
-            }
+            if (!string.IsNullOrEmpty(dto.FirstName))
+                user.FirstName = dto.FirstName;
+
+            if (!string.IsNullOrEmpty(dto.LastName))
+                user.LastName = dto.LastName;
 
             if (!string.IsNullOrEmpty(dto.Email))
             {
@@ -76,9 +74,16 @@ namespace backend.Services
             }
 
             if (!string.IsNullOrEmpty(dto.Password))
-            {
-                user.Password = BCrypt.Net.BCrypt.HashPassword(dto.Password);
-            }
+                user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(dto.Password);
+
+            if (!string.IsNullOrEmpty(dto.PhoneNumber))
+                user.PhoneNumber = dto.PhoneNumber;
+
+            if (dto.Role.HasValue)
+                user.Role = dto.Role.Value;
+
+            if (dto.IsActive.HasValue)
+                user.IsActive = dto.IsActive.Value;
 
             user.UpdatedAt = DateTime.UtcNow;
 
@@ -102,8 +107,13 @@ namespace backend.Services
             return new UserResponseDto
             {
                 Id = user.Id,
-                Username = user.Username,
+                FirstName = user.FirstName,
+                LastName = user.LastName,
                 Email = user.Email,
+                PhoneNumber = user.PhoneNumber,
+                Role = user.Role,
+                IsActive = user.IsActive,
+                LastLoginAt = user.LastLoginAt,
                 CreatedAt = user.CreatedAt,
                 UpdatedAt = user.UpdatedAt
             };

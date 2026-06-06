@@ -1,31 +1,39 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
+using backend.Models.Enums;
 
 namespace backend.Models.Entities
 {
     [Table("Users")]
-    public class User
+    public class User : BaseEntity
     {
-        [Key]
-        [Column("User_Id")]
-        public Guid Id { get; set; }
+        [Required, MaxLength(50)]
+        [Column("First_Name")]
+        public string FirstName { get; set; } = string.Empty;
 
         [Required, MaxLength(50)]
-        [Column("UserName")]
-        public string Username { get; set; } = string.Empty;
-
-        [Required]
-        [Column("Password")]
-        public string Password { get; set; } = string.Empty;
+        [Column("Last_Name")]
+        public string LastName { get; set; } = string.Empty;
 
         [Required, EmailAddress(ErrorMessage = "Enter a valid email address")]
         [Column("Email")]
         public string Email { get; set; } = string.Empty;
 
-        [Column("Created_at")]
-        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+        [Required]
+        [Column("Password_Hash")]
+        public string PasswordHash { get; set; } = string.Empty;
 
-        [Column("Updated_at")]
-        public DateTime? UpdatedAt { get; set; }
+        [Column("Phone_Number")]
+        public string? PhoneNumber { get; set; }
+
+        [Required]
+        [Column("Role")]
+        public UserRole Role { get; set; }
+
+        [Column("Is_Active")]
+        public bool IsActive { get; set; } = true;
+
+        [Column("Last_Login_At")]
+        public DateTime? LastLoginAt { get; set; }
     }
 }

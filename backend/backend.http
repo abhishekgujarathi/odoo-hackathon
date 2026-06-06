@@ -31,9 +31,12 @@ POST {{backend_HostAddress}}/api/v1/user
 Content-Type: application/json
 
 {
-  "username": "johndoe",
+  "firstName": "John",
+  "lastName": "Doe",
+  "email": "johndoe@example.com",
   "password": "Test@123",
-  "email": "johndoe@example.com"
+  "phoneNumber": "9876543210",
+  "role": 1
 }
 
 ### Update User
@@ -41,8 +44,12 @@ PUT {{backend_HostAddress}}/api/v1/user/{{userId}}
 Content-Type: application/json
 
 {
-  "username": "johndoe_updated",
-  "email": "johndoe_updated@example.com"
+  "firstName": "John_Updated",
+  "lastName": "Doe_Updated",
+  "email": "johndoe_updated@example.com",
+  "phoneNumber": "9876543211",
+  "role": 2,
+  "isActive": true
 }
 
 ### Delete User

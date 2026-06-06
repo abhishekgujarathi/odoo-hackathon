@@ -21,6 +21,8 @@ builder.Services.Configure<AppSettings>(builder.Configuration.GetSection("AppSet
 
 // Repositories
 builder.Services.AddScoped<IRepository<User>, Repository<User>>();
+builder.Services.AddScoped<IRepository<Vendor>, Repository<Vendor>>();
+builder.Services.AddScoped<IRepository<VendorCategory>, Repository<VendorCategory>>();
 
 // Authorization
 builder.Services.AddScoped<JwtUtils>();
