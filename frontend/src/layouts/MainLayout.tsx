@@ -9,7 +9,7 @@ import {
 
 import { Outlet } from "react-router-dom";
 import AppBreadcrumb from "../components/layout/AppBreadcrumb";
-import { AppSidebar } from "../components/layout/AppSidebar";
+import AppSidebar from "../components/layout/AppSidebar";
 
 const MainLayout = () => {
 	return (

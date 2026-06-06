@@ -14,7 +14,7 @@ const AppBreadcrumb = () => {
 
 	const path = location.pathname;
 
-	const crumbs = [{ title: "ODOO", path: "/" }];
+	const crumbs = [{ title: "HRMS", path: "/" }];
 
 	const paths = path.split("/");
 	let newPath = "/";

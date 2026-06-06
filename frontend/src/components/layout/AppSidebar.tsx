@@ -1,134 +1,46 @@
-import * as React from "react";
+// components/layout/AppSidebar.tsx
 
-import {
-	Sidebar,
-	SidebarContent,
-	SidebarGroup,
-	SidebarGroupContent,
-	SidebarGroupLabel,
-	SidebarHeader,
-	SidebarMenu,
-	SidebarMenuButton,
-	SidebarMenuItem,
-} from "../ui/sidebar";
+import { NavLink } from "react-router-dom";
 
-import { LogOut, User, UserCog } from "lucide-react";
-import { Button } from "../ui/button";
-import { navLinksList } from "./NavLinks";
-import { RoleUtil } from "../../auth/role.util";
-import { Link } from "react-router-dom";
+const menuItems = [
+  { name: "Dashboard", path: "/" },
+  { name: "Vendors", path: "/vendors" },
+  { name: "RFQs", path: "/rfqs" },
+  { name: "Quotations", path: "/quotations" },
+  { name: "Approvals", path: "/approvals" },
+  { name: "Purchase Orders", path: "/purchase-orders" },
+  { name: "Invoices", path: "/invoices" },
+  { name: "Reports", path: "/reports" },
+  { name: "Activity", path: "/activity" },
+];
 
-export const AppSidebar = ({
-	...props
-}: React.ComponentProps<typeof Sidebar>) => {
-	return (
-		<Sidebar {...props} collapsible={"icon"}>
-			<SidebarHeader>
-				<SidebarMenu>
-					<SidebarMenuItem>
-						<SidebarMenuButton
-							asChild
-							className="p-0 hover:bg-primary active:bg-primary hover:text-white"
-							disabled
-						>
-							<div className="flex flex-row justify-start items-center px-2 m-0">
-								<img
-									alt="Logo"
-									className="w-5 h-5 px-1 text-white"
-								/>
-								<div className="ml-0.5 text-lg font-bold">ODOO</div>
-							</div>
-						</SidebarMenuButton>
-					</SidebarMenuItem>
-				</SidebarMenu>
-			</SidebarHeader>
-			<AppSideBarContent />
-		</Sidebar>
-	);
-};
+export default function AppSidebar() {
+  return (
+    <aside className="w-64 border-r">
+      <div className="h-16 border-b flex items-center px-5">
+        <h1 className="font-bold text-xl">
+          VendorBridge
+        </h1>
+      </div>
 
-export const AppSideBarContent = () => {
-	return (
-		<SidebarContent className="flex flex-col justify-between py-4">
-			<div>
-				{navLinksList.navMain.map((item) => (
-					<SidebarGroup key={item.title}>
-						<SidebarGroupLabel>{item.title}</SidebarGroupLabel>
-						<SidebarGroupContent>
-							<AppSidebarMenu item={item} />
-						</SidebarGroupContent>
-					</SidebarGroup>
-				))}
-			</div>
-
-		</SidebarContent>
-	);
-};
-
-export const AppSidebarMenu = ({ item }) => {
-	return (
-		<SidebarMenu>
-			{item.items.map((item) => (
-				<SidebarMenuItem key={item.title}>
-					<SidebarMenuButton asChild isActive={item.isActive}>
-						<Link to={item.url} className="flex flex-row justify-start items-center block">
-							{item.icon}
-							{item.title}
-						</Link>
-					</SidebarMenuButton>
-				</SidebarMenuItem>
-			))}
-		</SidebarMenu>
-	);
-};
-
-// export const UserLoginMenu = () => {
-// 	const handleLogout = () => {
-// 		localStorage.removeItem("token");
-// 		localStorage.removeItem("role");
-// 		localStorage.removeItem("employeeId");
-// 		globalThis.location.href = "/login";
-// 	};
-
-// 	return (
-// 		<SidebarGroup>
-// 			<SidebarGroupLabel>User</SidebarGroupLabel>
-// 			<SidebarGroupContent>
-// 				<SidebarMenu>
-// 					<SidebarMenuItem>
-// 						<SidebarMenuButton asChild>
-// 							<Link
-// 								to={"/my-profile"}
-// 								className="flex flex-row items-center px-3 w-full"
-// 							>
-// 								<User />
-// 								Profile
-// 							</Link>
-// 						</SidebarMenuButton>
-// 						{(RoleUtil.isAdmin || RoleUtil.isHr) && (
-// 							<SidebarMenuButton asChild>
-// 								<Link
-// 									to={"/admin-panel"}
-// 									className="flex flex-row items-center px-3 w-full"
-// 								>
-// 									<UserCog />
-// 									Admin Panel
-// 								</Link>
-// 							</SidebarMenuButton>
-// 						)}
-// 						<SidebarMenuButton asChild onClick={handleLogout}>
-// 							<Button asChild className="flex justify-start cursor-pointer">
-// 								<div className="flex flex-row justify-start items-center">
-// 									<LogOut />
-// 									<div>Log out</div>
-// 								</div>
-// 							</Button>
-// 						</SidebarMenuButton>
-// 					</SidebarMenuItem>
-// 				</SidebarMenu>
-// 			</SidebarGroupContent>
-// 		</SidebarGroup>
-// 	);
-// };
-
-AppSidebar.AppSidebarMenu = AppSidebarMenu;
+      <nav className="p-3 space-y-1">
+        {menuItems.map((item) => (
+          <NavLink
+            key={item.path}
+            to={item.path}
+            className={({ isActive }) =>
+              `block rounded-md px-3 py-2 text-sm
+              ${
+                isActive
+                  ? "bg-primary text-primary-foreground"
+                  : "hover:bg-muted"
+              }`
+            }
+          >
+            {item.name}
+          </NavLink>
+        ))}
+      </nav>
+    </aside>
+  );
+}

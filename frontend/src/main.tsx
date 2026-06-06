@@ -1,14 +1,35 @@
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
 import "./index.css";
-import { RouterProvider } from "react-router-dom";
+import { BrowserRouter, Route, RouterProvider, Routes } from "react-router-dom";
 import router from "./routes.tsx";
 import AppProviders from "./providers/AppProviders.tsx";
+import VendorData from "./pages/VendorForm.tsx";
+import Dashboard from "./pages/Dashboard.tsx";
+import VendorsPage from "./pages/VendorsPage.tsx";
+import AppLayout from "./components/layout/AppLayout.tsx";
+import VendorForm from "./pages/VendorForm.tsx";
+import RFQForm from "./pages/RFQForm.tsx";
+import QuotationComparisonPage from "./pages/QuotationComparisonPage.tsx";
 
 createRoot(document.getElementById("root")!).render(
-	<StrictMode>
-		<AppProviders>
-			<RouterProvider router={router} />
-		</AppProviders>
-	</StrictMode>
+  <StrictMode>
+    <AppProviders>
+      <BrowserRouter>
+        <Routes>
+          <Route element={<AppLayout />}>
+            <Route path="/" element={<Dashboard />} />
+
+            <Route path="/vendors" element={<VendorsPage />} />
+            <Route path="/vendors/add" element={<VendorForm />} />
+            <Route path="/rfqs" element={<RFQForm />} />
+            <Route
+              path="/quotations"
+              element={<QuotationComparisonPage />}
+            />
+          </Route>
+        </Routes>
+      </BrowserRouter>
+    </AppProviders>
+  </StrictMode>,
 );
