@@ -26,3 +26,9 @@ export const VENDOR_CATEGORY_ENDPOINTS = {
   update: (id: string) => `/vendor-category/${id}`,
   delete: (id: string) => `/vendor-category/${id}`,
 };
+
+export const RFQ_ENDPOINTS = {
+  getAll: () => `/rfq`,
+  getById: (id: string) => `/rfq/${id}`,
+  create: () => `/rfq`,
+};

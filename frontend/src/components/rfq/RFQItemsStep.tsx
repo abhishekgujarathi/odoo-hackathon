@@ -20,6 +20,9 @@ import {
   Trash2,
 } from "lucide-react";
 
+import { useState, useEffect } from "react";
+import { vendorApi, type Vendor } from "@/api/vendorApi";
+
 type Props = {
   form: any;
   fields: any[];
@@ -27,20 +30,29 @@ type Props = {
   remove: any;
 };
 
-const availableVendors = [
-  "Infra Supplies Pvt Ltd",
-  "TechCore LTD",
-  "FastLog Transport",
-  "OfficeNeeds India",
-  "ABC Manufacturing",
-];
-
 export default function RFQItemsStep({
   form,
   fields,
   append,
   remove,
 }: Props) {
+  const [vendors, setVendors] = useState<Vendor[]>([]);
+  const [loadingVendors, setLoadingVendors] = useState(true);
+
+  useEffect(() => {
+    const fetchVendors = async () => {
+      try {
+        const data = await vendorApi.getAll();
+        setVendors(data);
+      } catch (err) {
+        console.error("Failed to load vendors:", err);
+      } finally {
+        setLoadingVendors(false);
+      }
+    };
+    fetchVendors();
+  }, []);
+
   return (
     <div className="space-y-8">
       {/* Line Items */}
@@ -115,6 +127,7 @@ export default function RFQItemsStep({
                             <Input
                               type="number"
                               {...field}
+                              onChange={(e) => field.onChange(parseFloat(e.target.value) || 0)}
                             />
                           </FormControl>
 
@@ -175,20 +188,24 @@ export default function RFQItemsStep({
         </h3>
 
         <div className="space-y-3">
-          {availableVendors.map(
-            (vendor) => (
+          {loadingVendors ? (
+            <p className="text-sm text-muted-foreground">Loading vendors...</p>
+          ) : vendors.length === 0 ? (
+            <p className="text-sm text-muted-foreground">No vendors available to assign.</p>
+          ) : (
+            vendors.map((vendor) => (
               <FormField
-                key={vendor}
+                key={vendor.id}
                 control={form.control}
                 name="vendors"
                 render={({ field }) => {
                   const selected =
                     field.value?.includes(
-                      vendor
+                      vendor.id
                     );
 
                   return (
-                    <label className="flex items-center gap-3 rounded-md border p-3 cursor-pointer">
+                    <label className="flex items-center gap-3 rounded-md border p-3 cursor-pointer hover:bg-muted/50 transition-colors">
                       <input
                         type="checkbox"
                         checked={
@@ -204,7 +221,7 @@ export default function RFQItemsStep({
                             field.onChange(
                               [
                                 ...field.value,
-                                vendor,
+                                vendor.id,
                               ]
                             );
                           } else {
@@ -214,19 +231,22 @@ export default function RFQItemsStep({
                                   v: string
                                 ) =>
                                   v !==
-                                  vendor
+                                  vendor.id
                               )
                             );
                           }
                         }}
                       />
 
-                      {vendor}
+                      <div>
+                        <p className="font-medium">{vendor.companyName}</p>
+                        <p className="text-xs text-muted-foreground">{vendor.email} • {vendor.categoryName || "No Category"}</p>
+                      </div>
                     </label>
                   );
                 }}
               />
-            )
+            ))
           )}
         </div>
       </div>

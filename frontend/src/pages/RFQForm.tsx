@@ -32,6 +32,8 @@ import RFQItemsStep from "@/components/rfq/RFQItemsStep";
 
 import RFQAttachmentStep from "@/components/rfq/RFQAttachmentStep";
 
+import { rfqApi } from "@/api/rfqApi";
+
 export default function RFQForm() {
   const navigate = useNavigate();
 
@@ -63,10 +65,33 @@ export default function RFQForm() {
     name: "items",
   });
 
-  const onSubmit = (data: RFQFormData) => {
-    console.log("RFQ Submitted");
+  const [isSubmitting, setIsSubmitting] = useState(false);
 
-    console.log(data);
+  const onSubmit = async (data: RFQFormData) => {
+    try {
+      setIsSubmitting(true);
+      
+      const payload = {
+        title: data.title,
+        description: data.description,
+        deadline: new Date(data.deadline).toISOString(),
+        items: data.items.map(item => ({
+          itemName: item.itemName,
+          quantity: item.quantity,
+          unit: item.unit,
+        })),
+        vendorIds: data.vendors,
+      };
+
+      await rfqApi.create(payload);
+      alert("RFQ created successfully!");
+      navigate("/"); // Dashboard
+    } catch (err: any) {
+      console.error("Failed to create RFQ:", err);
+      alert(err.message || "Failed to create RFQ");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
@@ -114,7 +139,7 @@ export default function RFQForm() {
                 <Button
                   type="button"
                   variant="outline"
-                  disabled={step === 1}
+                  disabled={step === 1 || isSubmitting}
                   onClick={() => setStep((prev) => prev - 1)}
                 >
                   Previous
@@ -131,7 +156,9 @@ export default function RFQForm() {
                       Next Step
                     </Button>
                   ) : (
-                    <Button type="submit">Send RFQ</Button>
+                    <Button type="submit" disabled={isSubmitting}>
+                      {isSubmitting ? "Sending..." : "Send RFQ"}
+                    </Button>
                   )}
                 </div>
               </div>
